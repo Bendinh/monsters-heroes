@@ -11,7 +11,7 @@ package Board;
  * v1.1–2026–02–18 - Added display value
  */
 
-public abstract class BasePiece {
+public class BasePiece {
     protected String displayValue;
 
     // Constructor

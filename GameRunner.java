@@ -12,19 +12,20 @@
  */
 
 import java.util.Scanner;
+import Board.BaseBoard;
 
 public class GameRunner {
     // Data
     private boolean gameSessionOnline;
     private Scanner scanner;
-    private BaseGameManager gameManager;
+    private WorldManager worldManager;
     private BasePlayer player;
 
     // Constructor
     public GameRunner() {
         this.gameSessionOnline = true;
         this.scanner = null;
-        this.gameManager = null;
+        this.worldManager = null;
         this.player = null;
     }
 
@@ -36,8 +37,8 @@ public class GameRunner {
     }
 
     // Get the game manager
-    public BaseGameManager getGameManager() {
-        return gameManager;
+    public WorldManager getWorldManager() {
+        return worldManager;
     }
     
     // Get the player
@@ -51,8 +52,8 @@ public class GameRunner {
     }
 
     // Set the game manager
-    public void setGameManager(BaseGameManager gameManager) {
-        this.gameManager = gameManager;
+    public void setWorldManager(WorldManager worldManager) {
+        this.worldManager = worldManager;
     }
 
     // Set the player
@@ -66,20 +67,9 @@ public class GameRunner {
         this.scanner = new Scanner(System.in); // Initialize the scanner for game session for user input
         this.initializePlayer(scanner); // Initialize the main player for the game session
 
-        // while (this.getGameSessionOnline()) { // Game session is online until the player decides to stop playing
+        this.mainGameLoop(scanner);
 
-        //     this.selectGame(scanner); // Select the game
-
-        //     this.getGameManager().explainRules(scanner); // Explain the rules of the game
-        //     this.getGameManager().setupGame(scanner, this.getPlayer()); // Setup the game
-        //     this.getGameManager().startGame(scanner); // Start the game
-        //     this.getGameManager().endGame(); // End the game
-
-        //     System.out.println("Would you like to play again? (y/n)"); // Ask the player if they want to play again
-        //     this.setGameSessionOnline(Utility.yesNoChoice(scanner)); // Get the player's choice
-        // }
-
-        // System.out.println("Thank you for playing " + this.getPlayer().getName() + "! See you next time!");
+        System.out.println("Thank you for playing " + this.getPlayer().getName() + "! See you next time!");
         this.scanner.close(); // Close the scanner
     }
 
@@ -107,22 +97,20 @@ public class GameRunner {
         System.out.println("Welcome, " + this.getPlayer().getName() + " to the world of Legends: Monsters and Heroes! Here is your hero party:");
         Utility.printDoubleSeparator();
         this.getPlayer().printHeroParty();
+        Utility.printSeparator();
     }
 
-    // Select the game
-    private void selectGame(Scanner scanner) {
-        System.out.println("Okay, " + this.getPlayer().getName() + "! What game would you like to play?");
-        System.out.println("Enter a number from the following options:");
-        System.out.println("1. Slider Puzzle");
-        System.out.println("2. Dots and Boxes");
-        
-        while (true) { // Continue until a valid choice is entered
-            int choice = Utility.getValidIntegerInput(scanner);
-            switch (choice) {
-                default: // Invalid choice
-                    System.out.println("Invalid choice. Please enter a valid number.");
-                    break;
-            }
+    // Main game loop
+    private void mainGameLoop(Scanner scanner) {
+        System.out.println("Let's get started on your journey, " + this.getPlayer().getName() + "! (Press Enter to continue)");
+        scanner.nextLine();
+
+        int gameOver = 0;
+
+        while (gameOver == 0) {
+            this.worldManager = new WorldManager(this.getPlayer());
+            gameOver = this.worldManager.startWorld(scanner);
         }
-    } 
+    }
+    
 }

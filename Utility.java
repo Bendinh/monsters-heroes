@@ -73,6 +73,27 @@ public class Utility {
         }
     } 
 
+    // Get valid string input from provided options
+    public static String getValidStringInputFromOptions(Scanner scanner, String[] options) {
+        while (true) { // Continue until a valid string is entered
+            try {
+                String input = scanner.nextLine();
+                System.out.println("-----------------------------------------------------------------------------------------------------------------"); // Print a new line to create spacing for aesthetic purposes
+                input = input.toLowerCase(); // Convert the input to lowercase
+                for (String option : options) {
+                    if (input.equals(option)) {
+                        return input; // Return the valid string
+                    }
+                }
+                System.out.print("Invalid input. Please enter a string from the valid options: ");
+            } catch (Exception e) { // If the input is not a valid string, print an error message and continue the loop
+                System.out.println("-----------------------------------------------------------------------------------------------------------------"); // Print a new line to create spacing for aesthetic purposes
+                System.out.print("Invalid input. Please enter a string from the valid options: ");
+                scanner.nextLine();
+            }
+        }
+    }
+
     // Get the valid yes/no input
     public static boolean yesNoChoice(Scanner scanner) {
         while (true) { // Continue until a valid yes/no is entered

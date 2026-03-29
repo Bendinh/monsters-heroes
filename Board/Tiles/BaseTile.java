@@ -16,7 +16,7 @@ public abstract class BaseTile {
     protected int column;
     protected String displayValue;
     protected String backgroundColor;
-    
+
     protected static final String RESET = "\033[0m";
 
     // Constructor
@@ -50,7 +50,7 @@ public abstract class BaseTile {
     //#region Other Methods
     // Get the display value
     public String getDisplayValue() {
-        return displayValue;
+        return this.displayValue;
     }
 
     // Set the display value
