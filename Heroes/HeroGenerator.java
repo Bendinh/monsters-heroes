@@ -35,17 +35,17 @@ public class HeroGenerator {
             String line;
             while ((line = reader.readLine()) != null) { // Read each line of the file
                 String[] parts = line.split("\\s+"); // Split the line into parts
-                if (parts.length < heroIndex + 7) {
+                if (parts.length <  7) {
                     continue; // Skip the line if it doesn't have enough stats for the hero
                 }
                 try {
-                    String name = parts[heroIndex]; // Get the name of the hero
-                    int mana = Integer.parseInt(parts[heroIndex + 1]); // Get the mana of the hero
-                    int strength = Integer.parseInt(parts[heroIndex + 2]); // Get the strength of the hero
-                    int agility = Integer.parseInt(parts[heroIndex + 3]); // Get the agility of the hero
-                    int dexterity = Integer.parseInt(parts[heroIndex + 4]); // Get the dexterity of the hero
-                    int money = Integer.parseInt(parts[heroIndex + 5]); // Get the money of the hero
-                    int experience = Integer.parseInt(parts[heroIndex + 6]); // Get the experience of the hero
+                    String name = parts[0]; // Get the name of the hero
+                    int mana = Integer.parseInt(parts[1]); // Get the mana of the hero
+                    int strength = Integer.parseInt(parts[2]); // Get the strength of the hero
+                    int agility = Integer.parseInt(parts[3]); // Get the agility of the hero
+                    int dexterity = Integer.parseInt(parts[4]); // Get the dexterity of the hero
+                    int money = Integer.parseInt(parts[5]); // Get the money of the hero
+                    int experience = Integer.parseInt(parts[6]); // Get the experience of the hero
                     switch (heroIndex) { // Add the hero to the appropriate list
                         case WARRIOR_INDEX:
                             warriors.add(new Warrior(name, experience, money, mana, strength, agility, dexterity)); // Add the warrior to the list

@@ -12,4 +12,11 @@ public abstract class BaseItem {
         this.cost = cost;
         this.requiredLevel = requiredLevel;
     }
+
+    //#region Getters and Setters
+
+    // Get the item's name
+    public String getName() {
+        return name;
+    }
 }

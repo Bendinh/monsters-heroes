@@ -21,6 +21,22 @@ public class Utility {
     }
 
     //#region Other Methods
+
+    // Print separator
+    public static void printSeparator() {
+        System.out.println("-----------------------------------------------------------------------------------------------------------------"); // Print a separator to create spacing for aesthetic purposes
+    }
+
+    // Print double separator
+    public static void printDoubleSeparator() {
+        System.out.println("================================================================================================================="); // Print a double separator to create spacing for aesthetic purposes
+    }
+
+    // Print a new line
+    public static void printNewLine() {
+        System.out.println(); // Print a new line to create spacing for aesthetic purposes
+    }
+
     // Get the valid integer input
     public static int getValidIntegerInput(Scanner scanner) {
         while (true) { // Continue until a valid integer is entered
@@ -30,7 +46,7 @@ public class Utility {
                 System.out.println("-----------------------------------------------------------------------------------------------------------------"); // Print a new line to create spacing for aesthetic purposes
                 return input; // Return the valid integer
             } catch (Exception e) { // If the input is not a valid integer, print an error message and continue the loop
-                System.out.println("Invalid input. Please enter a number.");
+                System.out.print("Invalid input. Please enter a number: ");
                 scanner.nextLine();
             }
         }
@@ -48,9 +64,10 @@ public class Utility {
                         return input; // Return the valid integer
                     }
                 }
-                System.out.println("Invalid input. Please enter a number from the valid options.");
+                System.out.print("Invalid input. Please enter a number from the valid options: ");
             } catch (Exception e) { // If the input is not a valid integer, print an error message and continue the loop
-                System.out.println("Invalid input. Please enter a number.");
+                System.out.println("-----------------------------------------------------------------------------------------------------------------"); // Print a new line to create spacing for aesthetic purposes
+                System.out.print("Invalid input. Please enter a number: ");
                 scanner.nextLine();
             }
         }
@@ -65,7 +82,7 @@ public class Utility {
             if (input.equals("y") || input.equals("n") || input.equals("yes") || input.equals("no")) {
                 return input.equals("y") || input.equals("yes"); // Return true if the input is y/yes, false if the input is n/no
             } else {
-                System.out.println("Invalid input. Please enter a valid yes/no.");
+                System.out.print("Invalid input. Please enter a valid yes/no: ");
             }
         }
     }

@@ -10,6 +10,7 @@
  */
 import Heroes.BaseHero;
 import Heroes.HeroGenerator;
+import Items.BaseItem;
 
 public class BasePlayer {
     // Data
@@ -21,6 +22,7 @@ public class BasePlayer {
     public BasePlayer(String name, int[] typeOfHeroes) {
         this.setName(name);
 
+        // Generates the hero party based on the type of heroes the player chose
         this.heroParty = new BaseHero[typeOfHeroes.length];
         HeroGenerator heroGenerator = new HeroGenerator();
         for (int i = 0; i < typeOfHeroes.length; i++) {
@@ -50,9 +52,49 @@ public class BasePlayer {
         this.name = name;
     }
 
+    // Get the player's hero party
+    public BaseHero[] getHeroParty() {
+        return heroParty;
+    }
+
+    // Set the player's hero party
+    public void setHeroParty(BaseHero[] heroParty) {
+        this.heroParty = heroParty;
+    }
+
     //#endregion
 
     //#region Other Methods
+
+    // Print the player's hero party
+    public void printHeroParty() {
+        for (BaseHero hero : heroParty) {
+            System.out.println("Hero: " + hero.getName());
+            System.out.println("Level: " + hero.getLevel());
+            System.out.println("Experience: " + hero.getExperience());
+            System.out.println("Experience to next level: " + hero.getExperienceToNextLevel());
+            Utility.printNewLine();
+            System.out.println("Health: " + hero.getHealth());
+            System.out.println("Mana: " + hero.getMana());
+            System.out.println("Strength: " + hero.getStrength());
+            System.out.println("Agility: " + hero.getAgility());
+            System.out.println("Dexterity: " + hero.getDexterity());
+            Utility.printNewLine();
+            System.out.println("Money: " + hero.getMoney());
+            System.out.println("Equipped Weapon: " + (hero.getEquippedWeaponry() != null ? hero.getEquippedWeaponry().getName() : "None"));
+            System.out.println("Equipped Armor: " + (hero.getEquippedArmory() != null ? hero.getEquippedArmory().getName() : "None"));
+            System.out.print("Inventory: ");
+            if (hero.getInventory().size() == 0) {
+                System.out.print("None");
+            } else {
+                for (BaseItem item : hero.getInventory()) {
+                    System.out.print(item.getName() + ", ");
+                }
+            }
+            Utility.printNewLine();
+            Utility.printDoubleSeparator();
+        }
+    }
 
     //#endregion
 }
