@@ -9,6 +9,7 @@
  * v1.0–2026–02–07 - Initial implementation
  * v1.1–2026–02–19 - Added breaks between user inputs for aesthetic purposes
  */
+package Utility;
 
 import java.util.Scanner;
 
@@ -51,6 +52,24 @@ public class Utility {
             }
         }
     } 
+
+    // Get the valid integer input from 0 to bound
+    public static int getValidIntegerInputFrom0ToBound(Scanner scanner, int bound) {
+        while (true) { // Continue until a valid integer is entered
+            try {
+                int input = scanner.nextInt();
+                scanner.nextLine();
+                System.out.println("-----------------------------------------------------------------------------------------------------------------"); // Print a new line to create spacing for aesthetic purposes
+                if (input >= 0 && input <= bound) {
+                    return input; // Return the valid integer
+                }
+                System.out.print("Invalid input. Please enter a number between 0 and " + bound + ": ");
+            } catch (Exception e) { // If the input is not a valid integer, print an error message and continue the loop
+                System.out.print("Invalid input. Please enter a number between 0 and " + bound + ": ");
+                scanner.nextLine();
+            }
+        }
+    }
 
     // Get the valid integer input from provided options
     public static int getValidIntegerInputFromOptions(Scanner scanner, int[] options) {

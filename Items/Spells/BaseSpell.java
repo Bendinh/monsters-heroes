@@ -20,4 +20,13 @@ public abstract class BaseSpell extends BaseItem {
         this.damage = damage;
         this.manaCost = manaCost;
     }
+
+    //#region Other Methods
+
+    // Print the spell
+    public String toString() {
+        return "[" + this.type.toString() + " Spell] " + this.name + " (Price: " + this.cost + ", Level: " + this.requiredLevel + ", Damage: " + this.damage + ", Mana Cost: " + this.manaCost + ")";
+    }
+
+    //#endregion
 }

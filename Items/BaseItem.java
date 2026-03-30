@@ -19,4 +19,20 @@ public abstract class BaseItem {
     public String getName() {
         return name;
     }
+
+    // Get the item's cost
+    public int getCost() {
+        return cost;
+    }
+
+    //#endregion
+
+    //#region Other Methods
+
+    // Print the item
+    public String toString() {
+        return this.name + " - Cost: " + this.cost + " - Required Level: " + this.requiredLevel;
+    }
+
+    //#endregion
 }

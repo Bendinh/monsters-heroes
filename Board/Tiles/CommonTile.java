@@ -1,5 +1,6 @@
 package Board.Tiles;
 import Board.BasePiece;
+import java.util.Scanner;
 
 public class CommonTile extends BaseTile implements IMoveable {
     // Data
@@ -25,8 +26,9 @@ public class CommonTile extends BaseTile implements IMoveable {
 
     //#region Other Methods
     // Action when the tile is interacted with
-    public void action() {
+    public int action(Scanner scanner) {
         System.out.println("You have entered the common tile.");
+        return 0;
     }
 
     @Override

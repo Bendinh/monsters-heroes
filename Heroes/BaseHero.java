@@ -109,4 +109,15 @@ public abstract class BaseHero {
     public int getExperienceToNextLevel() {
         return experienceToNextLevel;
     }
+
+    // Get Hero Display Value in Market
+    public String getDisplayValueMarketBuy() {
+        return this.name + " [ Level: " + this.level + ", Gold: " + this.money + "]";
+    }
+
+    // Buy Item
+    public void buyItem(BaseItem item) {
+        this.inventory.add(item);
+        this.money -= item.getCost();
+    }
 }

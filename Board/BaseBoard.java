@@ -16,6 +16,8 @@ import Board.Tiles.ObstacleTile;
 import Board.Tiles.MarketTile;
 import Board.Tiles.IMoveable;
 import Board.BasePiece;
+import Items.ItemGenerator;
+import Player.BasePlayer;
 import java.util.Random;
 
 public class BaseBoard {
@@ -24,7 +26,9 @@ public class BaseBoard {
     protected int height;
     protected int width;
     protected BaseTile[][] boardTiles;
+    protected ItemGenerator itemGenerator;
 
+    protected BasePlayer player;
     protected int[] playerPosition;
     protected BasePiece playerPiece;
 
@@ -32,10 +36,13 @@ public class BaseBoard {
     protected static final String RESET = "\033[0m";
 
     // Constructor
-    public BaseBoard(int height, int width) {
+    public BaseBoard(int height, int width, BasePlayer player, ItemGenerator itemGenerator) {
         this.height = height;
         this.width = width;
         this.boardTiles = new BaseTile[height][width];
+        this.itemGenerator = itemGenerator;
+        this.player = player;
+        this.playerPiece = new BasePiece("P", this.player);
 
         this.createBoard();
         this.createObstacles();
@@ -62,6 +69,11 @@ public class BaseBoard {
     public void setWidth(int width) {
         this.width = width;
     }
+
+    // Get the tile at player's position
+    public BaseTile getTileAtPlayerPosition() {
+        return this.boardTiles[this.playerPosition[0]][this.playerPosition[1]];
+    }
     // #endregion
 
     //#region Other Methods
@@ -72,7 +84,6 @@ public class BaseBoard {
                 // Place the player on the start positions
                 CommonTile startTile = new CommonTile(r, c);
                 if (r==0 && c==0) {
-                    this.playerPiece = new BasePiece("P");
                     startTile.setPlayer(this.playerPiece);
                     this.playerPosition = new int[] {r, c};
                 } 
@@ -126,7 +137,7 @@ public class BaseBoard {
                 }
                 if (this.boardTiles[r][c] instanceof CommonTile && marketCount < maxMarkets) {
                     if (new Random().nextDouble() < 0.2857) { // of the remaining 70% common tiles, market takes up 20/70
-                        this.boardTiles[r][c] = new MarketTile(r, c);
+                        this.boardTiles[r][c] = new MarketTile(r, c, this.itemGenerator);
                         marketCount++;
                     }
                 }

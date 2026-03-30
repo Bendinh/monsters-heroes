@@ -11,4 +11,13 @@ public class Potions extends BaseItem {
         this.attributeIncrease = attributeIncrease;
         this.attributeAffected = attributeAffected.split("/");
     }
+
+    //#region Other Methods
+
+    // Print the armor
+    public String toString() {
+        return "[Potion] " + this.name + " (Price: " + this.cost + ", Level: " + this.requiredLevel + ", Attribute Increase: " + this.attributeIncrease + ", Attribute Affected: " + String.join("/", this.attributeAffected) + ")";
+    }
+
+    //#endregion
 }

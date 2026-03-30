@@ -1,3 +1,4 @@
+package Player;
 /**
  * File: Player.java
  * Description: Class for a player in the game.
@@ -11,6 +12,7 @@
 import Heroes.BaseHero;
 import Heroes.HeroGenerator;
 import Items.BaseItem;
+import Utility.Utility;
 
 public class BasePlayer {
     // Data
@@ -65,6 +67,11 @@ public class BasePlayer {
     //#endregion
 
     //#region Other Methods
+
+    // Get the hero at index
+    public BaseHero getHeroAtIndex(int index) {
+        return heroParty[index];
+    }
 
     // Print the player's hero party
     public void printHeroParty() {

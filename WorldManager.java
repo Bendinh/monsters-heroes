@@ -12,15 +12,22 @@
 
 import java.util.Scanner;
 import Board.BaseBoard;
+import Items.ItemGenerator;
+import Player.BasePlayer;
+import Utility.Utility;
+import Items.BaseItem;
+import Board.Tiles.MarketTile;
 
 public class WorldManager {
     // Data
     private BaseBoard board;
     private BasePlayer player;
+    private ItemGenerator itemGenerator;
 
     // Constructor
     public WorldManager(BasePlayer player) {
-        this.board = new BaseBoard(8, 8);
+        this.itemGenerator = new ItemGenerator();
+        this.board = new BaseBoard(8, 8, player, this.itemGenerator);
         this.player = player;
     }
     
@@ -80,6 +87,14 @@ public class WorldManager {
                 case "i":
                     break;
                 case "m":
+                    if (this.board.getTileAtPlayerPosition() instanceof MarketTile) {
+                        validMove = true;
+                        if(((MarketTile) this.board.getTileAtPlayerPosition()).action(scanner) == 1) {
+                            return 1;
+                        }
+                    } else {
+                        System.out.println("You are not on a market tile. You cannot enter the market.");
+                    }
                     break;
                 case "h":
                     break;
