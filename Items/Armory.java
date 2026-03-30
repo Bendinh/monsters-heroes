@@ -34,5 +34,10 @@ public class Armory extends BaseItem implements IExpirable {
         this.usesLeft = 10;
     }
 
+    // Get the cost to repair the armor
+    public int getCostToRepair() {
+        return this.cost / 2;
+    }
+
     //#endregion
 }

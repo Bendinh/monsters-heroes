@@ -35,5 +35,11 @@ public class Weaponry extends BaseItem implements IExpirable {
     public void resetUsesLeft() {
         this.usesLeft = 10;
     }
+
+    // Get the cost to repair the weapon
+    public int getCostToRepair() {
+        return this.cost / 2;
+    }
+
     //#endregion
 }

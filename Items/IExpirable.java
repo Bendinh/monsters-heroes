@@ -3,6 +3,8 @@ package Items;
 public interface IExpirable {
 
     //#region Other Methods
+    // Get the cost to repair the item
+    public int getCostToRepair();
     // Use the item
     public void use();
 

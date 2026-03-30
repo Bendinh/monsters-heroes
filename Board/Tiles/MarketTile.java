@@ -7,6 +7,7 @@ import Utility.Utility;
 import java.util.ArrayList;
 import java.util.Scanner;
 import Heroes.BaseHero;
+import Items.IExpirable;
 
 public class MarketTile extends BaseTile implements IMoveable {
     // Data
@@ -90,6 +91,8 @@ public class MarketTile extends BaseTile implements IMoveable {
                     validMove = true;
                     break;
                 case "r":
+                    this.repairItem(scanner);
+                    validMove = true;
                     break;
                 case "e":
                     return 2;
@@ -155,6 +158,7 @@ public class MarketTile extends BaseTile implements IMoveable {
             BaseHero sellerHero = this.playerPiece.getPlayer().getHeroAtIndex(heroIndex - 1);
             if (sellerHero.getInventory().size() == 0) { // Check if the hero has any items to sell
                 System.out.println("Hero does not have any items to sell.");
+                Utility.printNewLine();
                 finishedSelling = true;
                 continue;
             }
@@ -174,6 +178,63 @@ public class MarketTile extends BaseTile implements IMoveable {
             System.out.println("Item sold successfully.");
             Utility.printNewLine();
             finishedSelling = true;
+        }
+    }
+
+    // Repair Item Flow
+    public void repairItem(Scanner scanner) {
+        System.out.println("Select hero to repair the item for:");
+        int[] heroIndexes = new int[this.playerPiece.getPlayer().getHeroParty().length];
+        for (int i = 0; i < this.playerPiece.getPlayer().getHeroParty().length; i++) {
+            System.out.println("[" + (i + 1) + "] " + this.playerPiece.getPlayer().getHeroParty()[i].getDisplayValueMarketBuy());
+            heroIndexes[i] = i + 1;
+        }
+        Utility.printNewLine();
+        System.out.print("Enter the hero index: ");
+        int heroIndex = Utility.getValidIntegerInputFromOptions(scanner, heroIndexes);
+
+        boolean finishedRepairing = false;
+        while (!finishedRepairing) {
+            BaseHero repairHero = this.playerPiece.getPlayer().getHeroAtIndex(heroIndex - 1);
+            ArrayList<IExpirable> expirableItems = new ArrayList<IExpirable>();
+            for (BaseItem item : repairHero.getInventory()) { // Iterate through the hero's inventory and add references of user's expirable items to the list
+                if (item instanceof IExpirable) {
+                    expirableItems.add((IExpirable) item); // Add references of user's expirable items to the list
+                }
+            }
+            if (expirableItems.size() == 0) { // Check if the hero has any items to repair
+                System.out.println("Hero does not have any items to repair.");
+                Utility.printNewLine();
+                finishedRepairing = true;
+                continue;
+            }
+            for (int i = 0; i < expirableItems.size(); i++) { // Print the expirable items in the hero's inventory
+                System.out.println("[" + (i + 1) + "] " + expirableItems.get(i).toString());
+            }
+            Utility.printNewLine();
+            System.out.print("Select item index to repair (for half of the cost), or '0' to go back to market menu: ");
+            int itemIndex = Utility.getValidIntegerInputFrom0ToBound(scanner, expirableItems.size());
+            if (itemIndex == 0) { // If the user wants to go back to the market menu, exit the loop
+                finishedRepairing = true;
+                continue;
+            }
+            IExpirable item = expirableItems.get(itemIndex - 1); // Get the expirable item to repair
+            if (item.getUsesLeft() == 10) { // Check if the item is still in good condition
+                System.out.println("Item does not need to be repaired.");
+                Utility.printNewLine();
+                finishedRepairing = true;
+                continue;
+            }
+            if (repairHero.getMoney() >= item.getCostToRepair()) { // Check if the hero has enough money to repair the item
+                repairHero.setMoney(repairHero.getMoney() - item.getCostToRepair()); // Subtract the cost to repair the item from the hero's money
+                item.resetUsesLeft(); // Reset the uses left of the item
+                System.out.println("Item repaired successfully.");
+                Utility.printNewLine();
+                finishedRepairing = true;
+            } else {
+                System.out.println("Hero does not have enough gold to repair this item."); // If the hero does not have enough money, print an error message
+                finishedRepairing = false;
+            }
         }
     }
     //#endregion
