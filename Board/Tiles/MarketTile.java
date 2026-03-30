@@ -66,7 +66,7 @@ public class MarketTile extends BaseTile implements IMoveable {
     // Get User Move
     public int getUserMove(Scanner scanner) {
         System.out.println("What would you like to do in the market?");
-        System.out.println("I - Manage Inventory");
+        System.out.println("I - Check Inventory");
         System.out.println("B - Buy Item");
         System.out.println("S - Sell Item");
         System.out.println("R - Repair Item");

@@ -16,6 +16,16 @@ public class Weaponry extends BaseItem implements IExpirable {
 
     //#region Other Methods
 
+    // Get the weapon's damage
+    public int getDamage() {
+        return this.damage;
+    }
+
+    // Get how many hands are required to wield the weapon
+    public int getRequiredHands() {
+        return this.requiredHands;
+    }
+
     // Print the armor
     public String toString() {
         return "[Weapon] " + this.name + " (" + this.usesLeft + "/10)" + " (Price: " + this.cost + ", Level: " + this.requiredLevel + ", Damage: " + this.damage + ", Hands: " + this.requiredHands + ")";

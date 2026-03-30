@@ -25,6 +25,11 @@ public abstract class BaseItem {
         return cost;
     }
 
+    // Get the item's required level
+    public int getRequiredLevel() {
+        return requiredLevel;
+    }
+
     //#endregion
 
     //#region Other Methods
