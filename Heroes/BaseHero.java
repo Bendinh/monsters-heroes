@@ -110,14 +110,28 @@ public abstract class BaseHero {
         return experienceToNextLevel;
     }
 
+    // Set the hero's money
+    public void setMoney(int money) {
+        this.money = money;
+    }
+
+    //#endregion
+
+    //#region Other Methods
+
     // Get Hero Display Value in Market
     public String getDisplayValueMarketBuy() {
         return this.name + " [ Level: " + this.level + ", Gold: " + this.money + "]";
     }
 
-    // Buy Item
-    public void buyItem(BaseItem item) {
-        this.inventory.add(item);
-        this.money -= item.getCost();
+    // Get Hero Display Value in Inventory
+    public String getDisplayValueInventory() {
+        return this.name + " [ Level: " + this.level + ", HP: " + this.health + ", MP: " + this.mana + "]";
     }
+
+    // Buy Item
+    public void addItemToInventory(BaseItem item) {
+        this.inventory.add(item);
+    }
+    //#endregion
 }

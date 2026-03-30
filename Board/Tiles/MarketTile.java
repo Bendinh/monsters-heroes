@@ -78,12 +78,16 @@ public class MarketTile extends BaseTile implements IMoveable {
             String move = Utility.getValidStringInputFromOptions(scanner, new String[] {"i", "b", "s", "r", "e", "q"});
             switch (move) {
                 case "i":
+                    this.playerPiece.getPlayer().printHeroParty();
+                    validMove = true;
                     break;
                 case "b":
                     this.buyItem(scanner);
                     validMove = true;
                     break;
                 case "s":
+                    this.sellItem(scanner);
+                    validMove = true;
                     break;
                 case "r":
                     break;
@@ -120,17 +124,57 @@ public class MarketTile extends BaseTile implements IMoveable {
                 finishedBuying = true;
                 continue;
             }
-            if (buyerHero.getMoney() >= this.items.get(itemIndex - 1).getCost()) {
-                BaseItem item = this.items.remove(itemIndex - 1);
-                buyerHero.buyItem(item);
+            if (buyerHero.getMoney() >= this.items.get(itemIndex - 1).getCost()) { // Check if the hero has enough money to buy the item
+                BaseItem item = this.items.remove(itemIndex - 1); // Remove the item from the market
+                buyerHero.setMoney(buyerHero.getMoney() - item.getCost()); // Subtract the cost of the item from the hero's money
+                buyerHero.addItemToInventory(item); // Add the item to the hero's inventory
                 System.out.println("Item bought successfully.");
+                Utility.printNewLine();
                 finishedBuying = true;
             } else {
-                System.out.println("Hero does not have enough gold to buy this item.");
+                System.out.println("Hero does not have enough gold to buy this item."); // If the hero does not have enough money, print an error message
                 finishedBuying = false;
             }
         }
+    }
 
+    // Sell Item Flow
+    public void sellItem(Scanner scanner) {
+        System.out.println("Select hero to sell the item for:");
+        int[] heroIndexes = new int[this.playerPiece.getPlayer().getHeroParty().length];
+        for (int i = 0; i < this.playerPiece.getPlayer().getHeroParty().length; i++) {
+            System.out.println("[" + (i + 1) + "] " + this.playerPiece.getPlayer().getHeroParty()[i].getDisplayValueMarketBuy());
+            heroIndexes[i] = i + 1;
+        }
+        Utility.printNewLine();
+        System.out.print("Enter the hero index: ");
+        int heroIndex = Utility.getValidIntegerInputFromOptions(scanner, heroIndexes);
+
+        boolean finishedSelling = false;
+        while (!finishedSelling) {
+            BaseHero sellerHero = this.playerPiece.getPlayer().getHeroAtIndex(heroIndex - 1);
+            if (sellerHero.getInventory().size() == 0) { // Check if the hero has any items to sell
+                System.out.println("Hero does not have any items to sell.");
+                finishedSelling = true;
+                continue;
+            }
+            for (int i = 0; i < sellerHero.getInventory().size(); i++) { // Print the items in the hero's inventory
+                System.out.println("[" + (i + 1) + "] " + sellerHero.getInventory().get(i).toString());
+            }
+            Utility.printNewLine();
+            System.out.print("Select item index to sell (for half of the cost), or '0' to go back to market menu: ");
+            int itemIndex = Utility.getValidIntegerInputFrom0ToBound(scanner, sellerHero.getInventory().size());
+            if (itemIndex == 0) { // If the user wants to go back to the market menu, exit the loop
+                finishedSelling = true;
+                continue;
+            }
+            BaseItem item = sellerHero.getInventory().remove(itemIndex - 1); // Remove the item from the hero's inventory
+            sellerHero.setMoney(sellerHero.getMoney() + item.getCost() / 2); // Add half of the cost of the item to the hero's money
+            this.items.add(item); // Add the item to the market
+            System.out.println("Item sold successfully.");
+            Utility.printNewLine();
+            finishedSelling = true;
+        }
     }
     //#endregion
 }

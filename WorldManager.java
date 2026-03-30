@@ -85,6 +85,7 @@ public class WorldManager {
                     validMove = this.board.attemptMovePlayer("d");
                     break;
                 case "i":
+                    this.player.printHeroParty();
                     break;
                 case "m":
                     if (this.board.getTileAtPlayerPosition() instanceof MarketTile) {
