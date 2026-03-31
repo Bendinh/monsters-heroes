@@ -19,6 +19,8 @@ import Board.BasePiece;
 import Items.ItemGenerator;
 import Player.BasePlayer;
 import java.util.Random;
+import Monsters.MonsterGenerator;
+import java.util.Scanner;
 
 public class BaseBoard {
     
@@ -27,6 +29,7 @@ public class BaseBoard {
     protected int width;
     protected BaseTile[][] boardTiles;
     protected ItemGenerator itemGenerator;
+    protected MonsterGenerator monsterGenerator;
 
     protected BasePlayer player;
     protected int[] playerPosition;
@@ -36,11 +39,12 @@ public class BaseBoard {
     protected static final String RESET = "\033[0m";
 
     // Constructor
-    public BaseBoard(int height, int width, BasePlayer player, ItemGenerator itemGenerator) {
+    public BaseBoard(int height, int width, BasePlayer player, ItemGenerator itemGenerator, MonsterGenerator monsterGenerator) {
         this.height = height;
         this.width = width;
         this.boardTiles = new BaseTile[height][width];
         this.itemGenerator = itemGenerator;
+        this.monsterGenerator = monsterGenerator;
         this.player = player;
         this.playerPiece = new BasePiece("P", this.player);
 
@@ -82,7 +86,7 @@ public class BaseBoard {
         for (int r = 0; r < this.getHeight(); r++) {
             for (int c = 0; c < this.getWidth(); c++) {
                 // Place the player on the start positions
-                CommonTile startTile = new CommonTile(r, c);
+                CommonTile startTile = new CommonTile(r, c, this.monsterGenerator);
                 if (r==0 && c==0) {
                     startTile.setPlayer(this.playerPiece);
                     this.playerPosition = new int[] {r, c};
@@ -221,6 +225,14 @@ public class BaseBoard {
             System.out.println("Invalid move. The forest is too dense to move through in that direction.");
             return false;
         }
+    }
+
+    // Check if a battle will occur where the player is
+    public int prepareForBattle(Scanner scanner) {
+        if (this.boardTiles[this.playerPosition[0]][this.playerPosition[1]] instanceof CommonTile) {
+            return ((CommonTile) this.boardTiles[this.playerPosition[0]][this.playerPosition[1]]).action(scanner);
+        }
+        return 0;
     }
 
     //#endregion

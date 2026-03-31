@@ -1,17 +1,24 @@
 package Board.Tiles;
 import Board.BasePiece;
 import java.util.Scanner;
+import java.util.Random;
+import Monsters.BaseMonster;
+import Monsters.MonsterGenerator;
+import Managers.BattleManager;
+import Utility.Utility;
 
 public class CommonTile extends BaseTile implements IMoveable {
     // Data
     protected BasePiece playerPiece;
+    protected MonsterGenerator monsterGenerator;
 
     // Constructor
-    public CommonTile(int row, int column) {
+    public CommonTile(int row, int column, MonsterGenerator monsterGenerator) {
         super(row, column);
         this.backgroundColor = "\033[43m"; // Yellow background
         this.displayValue = this.backgroundColor + "   " + RESET;
         this.playerPiece = null;
+        this.monsterGenerator = monsterGenerator;
     }
     //#region Getters and Setters
     // Get the player
@@ -27,8 +34,16 @@ public class CommonTile extends BaseTile implements IMoveable {
     //#region Other Methods
     // Action when the tile is interacted with
     public int action(Scanner scanner) {
-        System.out.println("You have entered the common tile.");
-        return 0;
+        int randomNumber = new Random().nextInt(10);
+        if (randomNumber < 3) { // 30% chance of encountering monsters
+            System.out.println("You have encountered monsters! Prepare for battle...");
+            Utility.printNewLine();
+            return this.battle(scanner);
+        } else { // 70% chance of continuing on your journey peacefully
+            System.out.println(" You continue on your journey peacefully...");
+            Utility.printNewLine();
+            return 0;
+        }
     }
 
     @Override
@@ -37,6 +52,12 @@ public class CommonTile extends BaseTile implements IMoveable {
             return this.backgroundColor + " " + this.playerPiece.getDisplayValue() + " " + RESET;
         }
         return super.getDisplayValue();
+    }
+
+    // Battle with the monsters
+    public int battle(Scanner scanner) {
+        BattleManager battleManager = new BattleManager(this.playerPiece.getPlayer(), this.monsterGenerator);
+        return battleManager.startBattle(scanner);
     }
     //#endregion
 }

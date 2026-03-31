@@ -12,6 +12,12 @@ public class Armory extends BaseItem implements IExpirable {
         this.usesLeft = 10; // 10 uses left by default
     }
 
+    //#region Getters and Setters
+    public int getDamageReduction() {
+        return this.damageReduction;
+    }
+    //#endregion
+
     //#region Other Methods
 
     // Print the armor

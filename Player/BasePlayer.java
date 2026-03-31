@@ -11,14 +11,18 @@ package Player;
  */
 import Heroes.BaseHero;
 import Heroes.HeroGenerator;
+import Heroes.Warrior;
+import Heroes.Paladin;
+import Heroes.Sorcerer;
 import Items.BaseItem;
 import Utility.Utility;
 import java.util.Scanner;
+import java.util.ArrayList;
 
 public class BasePlayer {
     // Data
     private String name;
-    private BaseHero[] heroParty;
+    private ArrayList<BaseHero> heroParty;
 
 
     // Constructor
@@ -26,18 +30,26 @@ public class BasePlayer {
         this.setName(name);
 
         // Generates the hero party based on the type of heroes the player chose
-        this.heroParty = new BaseHero[typeOfHeroes.length];
+        this.heroParty = new ArrayList<BaseHero>();
         HeroGenerator heroGenerator = new HeroGenerator();
         for (int i = 0; i < typeOfHeroes.length; i++) {
+            BaseHero refHero;
+            BaseHero newHero;
             switch (typeOfHeroes[i]) {
                 case 0:
-                    this.heroParty[i] = heroGenerator.getRandomWarrior();
+                    refHero = heroGenerator.getRandomWarrior();
+                    newHero = new Warrior(refHero.getName(), refHero.getExperience(), refHero.getMoney(), refHero.getMana(), refHero.getStrength(), refHero.getAgility(), refHero.getDexterity());
+                    this.heroParty.add(newHero);
                     break;
                 case 1:
-                    this.heroParty[i] = heroGenerator.getRandomPaladin();
+                    refHero = heroGenerator.getRandomPaladin();
+                    newHero = new Paladin(refHero.getName(), refHero.getExperience(), refHero.getMoney(), refHero.getMana(), refHero.getStrength(), refHero.getAgility(), refHero.getDexterity());
+                    this.heroParty.add(newHero);
                     break;
                 case 2:
-                    this.heroParty[i] = heroGenerator.getRandomSorcerer();
+                    refHero = heroGenerator.getRandomSorcerer();
+                    newHero = new Sorcerer(refHero.getName(), refHero.getExperience(), refHero.getMoney(), refHero.getMana(), refHero.getStrength(), refHero.getAgility(), refHero.getDexterity());
+                    this.heroParty.add(newHero);
                     break;
             }
         }
@@ -56,12 +68,12 @@ public class BasePlayer {
     }
 
     // Get the player's hero party
-    public BaseHero[] getHeroParty() {
+    public ArrayList<BaseHero> getHeroParty() {
         return heroParty;
     }
 
     // Set the player's hero party
-    public void setHeroParty(BaseHero[] heroParty) {
+    public void setHeroParty(ArrayList<BaseHero> heroParty) {
         this.heroParty = heroParty;
     }
 
@@ -71,7 +83,7 @@ public class BasePlayer {
 
     // Get the hero at index
     public BaseHero getHeroAtIndex(int index) {
-        return heroParty[index];
+        return heroParty.get(index);
     }
 
     // Print the player's hero party
@@ -81,15 +93,26 @@ public class BasePlayer {
         }
     }
 
+    // Get the maximum hero level
+    public int getMaxHeroLevel() {
+        int maxLevel = 0;
+        for (BaseHero hero : heroParty) {
+            if (hero.getLevel() > maxLevel) {
+                maxLevel = hero.getLevel();
+            }
+        }
+        return maxLevel;
+    }
+
     // Manage the hero party inventory
     public int manageHeroPartyInventory(Scanner scanner) {
         this.printHeroParty();
         boolean finishedManaging = false;
         while (!finishedManaging) {
             System.out.println("Which hero's inventory would you like to manage?");
-            int[] heroIndexes = new int[this.heroParty.length];
-            for (int i = 0; i < this.heroParty.length; i++) {
-                System.out.println("[" + (i + 1) + "] " + this.heroParty[i].getDisplayValueInventory());
+            int[] heroIndexes = new int[this.heroParty.size()];
+            for (int i = 0; i < this.heroParty.size(); i++) {
+                System.out.println("[" + (i + 1) + "] " + this.heroParty.get(i).getDisplayValueInventory());
                 heroIndexes[i] = i + 1;
             }
             Utility.printNewLine();

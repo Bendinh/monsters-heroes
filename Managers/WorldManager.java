@@ -1,3 +1,4 @@
+package Managers;
 /**
  * File: GameManager.java
  * Description: Abstract class for a game manager.
@@ -13,6 +14,7 @@
 import java.util.Scanner;
 import Board.BaseBoard;
 import Items.ItemGenerator;
+import Monsters.MonsterGenerator;
 import Player.BasePlayer;
 import Utility.Utility;
 import Items.BaseItem;
@@ -23,11 +25,13 @@ public class WorldManager {
     private BaseBoard board;
     private BasePlayer player;
     private ItemGenerator itemGenerator;
+    private MonsterGenerator monsterGenerator;
 
     // Constructor
     public WorldManager(BasePlayer player) {
         this.itemGenerator = new ItemGenerator();
-        this.board = new BaseBoard(8, 8, player, this.itemGenerator);
+        this.monsterGenerator = new MonsterGenerator();
+        this.board = new BaseBoard(8, 8, player, this.itemGenerator, this.monsterGenerator);
         this.player = player;
     }
     
@@ -74,16 +78,28 @@ public class WorldManager {
             switch (move) {
                 case "w":
                     validMove = this.board.attemptMovePlayer("w");
+                    if (this.board.prepareForBattle(scanner) == 1) {
+                        return 1;
+                    }
                     break;
                 case "a":
                     validMove = this.board.attemptMovePlayer("a");
+                    if (this.board.prepareForBattle(scanner) == 1) {
+                        return 1;
+                    }
                     break;
                 case "s":
                     validMove = this.board.attemptMovePlayer("s");
+                    if (this.board.prepareForBattle(scanner) == 1) {
+                        return 1;
+                    }
                     break;
                 case "d":
                     validMove = this.board.attemptMovePlayer("d");
-                    break;
+                    if (this.board.prepareForBattle(scanner) == 1) {
+                        return 1;
+                    }
+                    break; 
                 case "i":
                     validMove = true;
                     if (this.player.manageHeroPartyInventory(scanner) == 1) {

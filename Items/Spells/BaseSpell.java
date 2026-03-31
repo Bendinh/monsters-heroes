@@ -4,7 +4,7 @@ import Items.BaseItem;
 
 public abstract class BaseSpell extends BaseItem {
 
-    enum SpellType {
+    public enum SpellType {
         FIRE,
         ICE,
         LIGHTNING,
@@ -20,6 +20,20 @@ public abstract class BaseSpell extends BaseItem {
         this.damage = damage;
         this.manaCost = manaCost;
     }
+
+    //#region Getters and Setters
+    public SpellType getType() {
+        return this.type;
+    }
+
+    public int getDamage() {
+        return this.damage;
+    }
+
+    public int getManaCost() {
+        return this.manaCost;
+    }
+    //#endregion
 
     //#region Other Methods
 

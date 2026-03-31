@@ -109,9 +109,9 @@ public class MarketTile extends BaseTile implements IMoveable {
     // Buy Item Flow
     public void buyItem(Scanner scanner) {
         System.out.println("Select hero to buy the item for:");
-        int[] heroIndexes = new int[this.playerPiece.getPlayer().getHeroParty().length];
-        for (int i = 0; i < this.playerPiece.getPlayer().getHeroParty().length; i++) {
-            System.out.println("[" + (i + 1) + "] " + this.playerPiece.getPlayer().getHeroParty()[i].getDisplayValueMarketBuy());
+        int[] heroIndexes = new int[this.playerPiece.getPlayer().getHeroParty().size()];
+        for (int i = 0; i < this.playerPiece.getPlayer().getHeroParty().size(); i++) {
+            System.out.println("[" + (i + 1) + "] " + this.playerPiece.getPlayer().getHeroParty().get(i).getDisplayValueMarketBuy());
             heroIndexes[i] = i + 1;
         }
         Utility.printNewLine();
@@ -144,9 +144,9 @@ public class MarketTile extends BaseTile implements IMoveable {
     // Sell Item Flow
     public void sellItem(Scanner scanner) {
         System.out.println("Select hero to sell the item for:");
-        int[] heroIndexes = new int[this.playerPiece.getPlayer().getHeroParty().length];
-        for (int i = 0; i < this.playerPiece.getPlayer().getHeroParty().length; i++) {
-            System.out.println("[" + (i + 1) + "] " + this.playerPiece.getPlayer().getHeroParty()[i].getDisplayValueMarketBuy());
+        int[] heroIndexes = new int[this.playerPiece.getPlayer().getHeroParty().size()];
+        for (int i = 0; i < this.playerPiece.getPlayer().getHeroParty().size(); i++) {
+            System.out.println("[" + (i + 1) + "] " + this.playerPiece.getPlayer().getHeroParty().get(i).getDisplayValueMarketBuy());
             heroIndexes[i] = i + 1;
         }
         Utility.printNewLine();
@@ -184,9 +184,9 @@ public class MarketTile extends BaseTile implements IMoveable {
     // Repair Item Flow
     public void repairItem(Scanner scanner) {
         System.out.println("Select hero to repair the item for:");
-        int[] heroIndexes = new int[this.playerPiece.getPlayer().getHeroParty().length];
-        for (int i = 0; i < this.playerPiece.getPlayer().getHeroParty().length; i++) {
-            System.out.println("[" + (i + 1) + "] " + this.playerPiece.getPlayer().getHeroParty()[i].getDisplayValueMarketBuy());
+        int[] heroIndexes = new int[this.playerPiece.getPlayer().getHeroParty().size()];
+        for (int i = 0; i < this.playerPiece.getPlayer().getHeroParty().size(); i++) {
+            System.out.println("[" + (i + 1) + "] " + this.playerPiece.getPlayer().getHeroParty().get(i).getDisplayValueMarketBuy());
             heroIndexes[i] = i + 1;
         }
         Utility.printNewLine();

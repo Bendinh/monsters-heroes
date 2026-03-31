@@ -4,6 +4,8 @@ import Items.Armory;
 import Items.Weaponry;
 import Items.Potions;
 import Utility.Utility;
+import Items.Spells.BaseSpell;
+import Monsters.BaseMonster;
 
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -120,9 +122,87 @@ public abstract class BaseHero {
         this.money = money;
     }
 
+    public void setHealth(int health) {
+        this.health = health;
+    }
+
+    public void setMana(int mana) {
+        this.mana = mana;
+    }
+
+    public void setStrength(int strength) {
+        this.strength = strength;
+    }
+
+    public void setAgility(int agility) {
+        this.agility = agility;
+    }
+
+    public void setDexterity(int dexterity) {
+        this.dexterity = dexterity;
+    }
+
     //#endregion
 
     //#region Other Methods
+
+    public boolean isFainted() {
+        return this.health <= 0;
+    }
+
+    public void takeDamage(int amount) {
+        this.health -= amount;
+    }
+
+    public void spendMana(int amount) {
+        this.mana -= amount;
+    }
+
+    public void restoreAfterRound() {
+        this.health = (int) (this.health * 1.1);
+        this.mana = (int) (this.mana * 1.1);
+    }
+
+    public void reviveWithHalfStats() {
+        int newHealth = (this.level * 100) / 2;
+        int newMana = this.mana / 2;
+        this.health = newHealth;
+        this.mana = newMana;
+    }
+
+    public void addExperience(int amount) {
+        this.experience += amount;
+        while (this.experience >= this.experienceToNextLevel) {
+            this.experience -= this.experienceToNextLevel;
+            this.levelUp();
+        }
+    }
+
+    public void addMoney(int amount) {
+        this.money += amount;
+    }
+
+    private void levelUp() {
+        this.level += 1;
+        this.experienceToNextLevel = this.level * 10;
+        this.health = this.level * 100;
+        this.mana = (int) (this.mana * 1.1);
+
+        this.strength = (int) (this.strength * 1.05);
+        this.agility = (int) (this.agility * 1.05);
+        this.dexterity = (int) (this.dexterity * 1.05);
+
+        if (this instanceof Warrior) {
+            this.strength = (int) (this.strength * 1.05);
+            this.agility = (int) (this.agility * 1.05);
+        } else if (this instanceof Sorcerer) {
+            this.dexterity = (int) (this.dexterity * 1.05);
+            this.agility = (int) (this.agility * 1.05);
+        } else if (this instanceof Paladin) {
+            this.strength = (int) (this.strength * 1.05);
+            this.dexterity = (int) (this.dexterity * 1.05);
+        }
+    }
 
     // Get Hero Display Value in Market
     public String getDisplayValueMarketBuy() {
@@ -132,6 +212,37 @@ public abstract class BaseHero {
     // Get Hero Display Value in Inventory
     public String getDisplayValueInventory() {
         return this.name + " [ Level: " + this.level + ", HP: " + this.health + ", MP: " + this.mana + "]";
+    }
+
+    // Get Hero Display Value in Battle
+    public void printHeroInformationBattle() {
+        System.out.println("Hero: " + this.name);
+        System.out.println("Level: " + this.level);
+        System.out.println("Health: " + this.health);
+        System.out.println("Mana: " + this.mana);
+        System.out.println("Strength: " + this.strength);
+        System.out.println("Agility: " + this.agility);
+        System.out.println("Dexterity: " + this.dexterity);
+        System.out.print("Equipped Weapons: ");
+        if (this.equippedWeaponry.size() == 0) {
+            System.out.print("None");
+        } else {
+            for (Weaponry weapon : this.equippedWeaponry) {
+                System.out.print(weapon.getName() + ", ");
+            }
+        }
+        System.out.println();
+
+        System.out.println("Equipped Armor: " + (this.equippedArmory != null ? this.equippedArmory.getName() : "None"));
+        System.out.print("Inventory: ");
+        if (this.inventory.size() == 0) {
+            System.out.print("None");
+        } else {
+            for (BaseItem item : this.inventory) {
+                System.out.print(item.getName() + ", ");
+            }
+        }
+        Utility.printNewLine();
     }
 
     // Print Inventory
@@ -191,6 +302,8 @@ public abstract class BaseHero {
 
             System.out.print("Enter your option: ");
             String move = Utility.getValidStringInputFromOptions(scanner, new String[] {"a", "w", "p", "i", "e", "q"});
+
+            int result = 0;
             switch (move) {
                 case "a":
                     this.equipArmor(scanner);
@@ -218,7 +331,7 @@ public abstract class BaseHero {
     }
 
     // Equip Armor
-    public void equipArmor(Scanner scanner) {
+    public int equipArmor(Scanner scanner) {
         ArrayList<Armory> armors = new ArrayList<Armory>();
         for (BaseItem item : this.inventory) {
             if (item instanceof Armory) {
@@ -228,7 +341,7 @@ public abstract class BaseHero {
         if (armors.size() == 0 && this.equippedArmory == null) {
             System.out.println("Hero has no armor in inventory and nothing equipped.");
             Utility.printNewLine();
-            return;
+            return 0; // If the hero has no armor in inventory and nothing equipped, the turn is not counted as finished
         }
         if (armors.size() > 0) {
             for (int i = 0; i < armors.size(); i++) {
@@ -241,9 +354,9 @@ public abstract class BaseHero {
         boolean finishedEquipping = false;
         while (!finishedEquipping) {
             if (armors.size() > 0) {
-                System.out.print("Enter the armor index to equip, or 'u' to unequip armor, or '0' to go back to inventory menu: ");
+                System.out.print("Enter the armor index to equip, or 'u' to unequip armor, or '0' to go back to menu: ");
             } else {
-                System.out.print("Enter 'u' to unequip armor, or '0' to go back to inventory menu: ");
+                System.out.print("Enter 'u' to unequip armor, or '0' to go back to menu: ");
             }
             String[] options = new String[armors.size() + 2];
             for (int i = 0; i < armors.size(); i++) {
@@ -254,7 +367,7 @@ public abstract class BaseHero {
             String armorIndex = Utility.getValidStringInputFromOptions(scanner, options);
             if (armorIndex.equals("0")) {
                 finishedEquipping = true;
-                continue;
+                return 0; // If the hero goes back to menu, the turn is not counted as finished
             }
             if (armorIndex.equals("u")) {
                 if (this.equippedArmory == null) {
@@ -288,10 +401,11 @@ public abstract class BaseHero {
             Utility.printNewLine();
             finishedEquipping = true;
         }
+        return 1;
     }
 
     // Equip Weapon
-    public void equipWeapon(Scanner scanner) {
+    public int equipWeapon(Scanner scanner) {
         ArrayList<Weaponry> weapons = new ArrayList<Weaponry>();
         for (BaseItem item : this.inventory) {
             if (item instanceof Weaponry) {
@@ -301,7 +415,7 @@ public abstract class BaseHero {
         if (weapons.size() == 0 && this.equippedWeaponry.size() == 0) {
             System.out.println("Hero has no weapons in inventory and nothing equipped.");
             Utility.printNewLine();
-            return;
+            return 0; // If the hero has no weapons in inventory and nothing equipped, the turn is not counted as finished
         }
         if (weapons.size() > 0) {
             for (int i = 0; i < weapons.size(); i++) {
@@ -314,9 +428,9 @@ public abstract class BaseHero {
         boolean finishedEquipping = false;
         while (!finishedEquipping) {
             if (weapons.size() > 0) {
-                System.out.print("Enter the weapon index to equip, or 'u' to unequip weapon, or '0' to go back to inventory menu: ");
+                System.out.print("Enter the weapon index to equip, or 'u' to unequip weapon, or '0' to go back to menu: ");
             } else {
-                System.out.print("Enter 'u' to unequip weapon, or '0' to go back to inventory menu: ");
+                System.out.print("Enter 'u' to unequip weapon, or '0' to go back to menu: ");
             }
 
             String[] options = new String[weapons.size() + 2];
@@ -329,8 +443,7 @@ public abstract class BaseHero {
 
             // Go back to inventory menu
             if (weaponIndex.equals("0")) {
-                finishedEquipping = true;
-                continue;
+                return 0; // If the hero goes back to menu, the turn is not counted as finished
             }
 
             // Unequip weapon
@@ -371,10 +484,11 @@ public abstract class BaseHero {
             Utility.printNewLine();
             finishedEquipping = true;
         }
+        return 1;
     }
 
     // Use Potion
-    public void usePotion(Scanner scanner) {
+    public int usePotion(Scanner scanner) {
         ArrayList<Potions> potions = new ArrayList<Potions>();
         for (BaseItem item : this.inventory) {
             if (item instanceof Potions) {
@@ -384,7 +498,7 @@ public abstract class BaseHero {
         if (potions.size() == 0) {
             System.out.println("Hero has no potions in inventory.");
             Utility.printNewLine();
-            return;
+            return 0; // If the hero has no potions in inventory, the turn is not counted as finished
         }
         for (int i = 0; i < potions.size(); i++) {
             System.out.println("[" + (i + 1) + "] " + potions.get(i).toString());
@@ -392,11 +506,10 @@ public abstract class BaseHero {
         Utility.printNewLine();
         boolean finishedUsing = false;
         while (!finishedUsing) {
-            System.out.print("Enter the potion index to use, or '0' to go back to inventory menu: ");
+            System.out.print("Enter the potion index to use, or '0' to go back to menu: ");
             int potionIndex = Utility.getValidIntegerInputFrom0ToBound(scanner, potions.size() + 1);
             if (potionIndex == 0) {
-                finishedUsing = true;
-                continue;
+                return 0; // If the hero goes back to menu, the turn is not counted as finished
             }
             Potions chosen = potions.get(potionIndex - 1);
             if (this.level < chosen.getRequiredLevel()) {
@@ -410,6 +523,7 @@ public abstract class BaseHero {
             Utility.printNewLine();
             finishedUsing = true;
         }
+        return 1;
     }
 
     private void applyPotionEffects(Potions potion) {
@@ -428,6 +542,125 @@ public abstract class BaseHero {
                 this.dexterity += increase;
             }
         }
+    }
+    
+    // Attack Monster
+    public int attackMonster(Scanner scanner, ArrayList<BaseMonster> monsters) {
+        for (int i = 0; i < monsters.size(); i++) {
+            System.out.println("[" + (i + 1) + "] " + monsters.get(i).getDisplayValue());
+        }
+        Utility.printNewLine();
+        System.out.print("Enter the monster index to attack, or '0' to go back to menu: ");
+        int monsterIndex = Utility.getValidIntegerInputFrom0ToBound(scanner, monsters.size() + 1);
+        if (monsterIndex == 0) {
+            return 0;
+        }
+        BaseMonster chosen = monsters.get(monsterIndex - 1);
+        
+        // check if monster is able to dodge
+        int dodge = Utility.getRandomNumber(0, 100);
+        if (dodge < chosen.getDodgeChance()) {
+            System.out.println(chosen.getName() + " dodged the attack.");
+            Utility.printNewLine();
+            return 1; // If the monster dodged the attack, the turn is finished
+        }
+
+        // monster doesn't dodge the attack, deal damage
+        int damageDealt = this.strength; // Base damage is the hero's strength
+        if (this.equippedWeaponry.size() > 0) {
+            for (Weaponry weapon : this.equippedWeaponry) {
+                damageDealt += weapon.getDamage(); // Add the weapon's damage to the base damage
+            }
+        }
+        damageDealt *= 0.05; // damage scaled to 5% of total offensive stats
+
+
+        chosen.takeDamage(damageDealt);
+        System.out.println(chosen.getName() + " took " + damageDealt + " damage.");
+        Utility.printNewLine();
+
+        return 1;
+    }
+   
+    // Use Spell
+    public int useSpell(Scanner scanner, ArrayList<BaseMonster> monsters) {
+        // check if hero has spells in inventory
+        ArrayList<BaseSpell> spells = new ArrayList<BaseSpell>();
+        for (BaseItem item : this.inventory) { // Get all spells from the inventory
+            if (item instanceof BaseSpell) {
+                spells.add((BaseSpell) item);
+            }
+        }
+        if (spells.size() == 0) {
+            System.out.println("Hero has no spells in inventory.");
+            Utility.printNewLine();
+            return 0; // If the hero has no spells in inventory, the turn is not counted as finished
+        }
+        for (int i = 0; i < spells.size(); i++) {
+            System.out.println("[" + (i + 1) + "] " + spells.get(i).toString()); // Print the spells
+        }
+        Utility.printNewLine();
+
+        System.out.print("Enter the spell index to use, or '0' to go back to action menu: ");
+        int spellIndex = Utility.getValidIntegerInputFrom0ToBound(scanner, spells.size() + 1);
+        if (spellIndex == 0) {
+            return 0; // If the hero goes back to action menu, the turn is not counted as finished
+        }
+
+        // Get the chosen spell
+        BaseSpell chosenSpell = spells.get(spellIndex - 1);
+
+        // check if hero has the required level to use the spell
+        if (this.level < chosenSpell.getRequiredLevel()) {
+            System.out.println("Hero does not have the required level to use this spell.");
+            Utility.printNewLine();
+            return 0; // If the hero does not have the required level to use the spell, the turn is not counted as finished
+        }
+
+        // check if hero has enough mana to use the spell
+        if (this.mana < chosenSpell.getManaCost()) {
+            System.out.println("Hero does not have enough mana to use this spell.");
+            Utility.printNewLine();
+            return 0; // If the hero does not have enough mana to use the spell, the turn is not counted as finished
+        }
+
+        // choose a monster to target
+        for (int i = 0; i < monsters.size(); i++) {
+            System.out.println("[" + (i + 1) + "] " + monsters.get(i).getDisplayValue());
+        }
+        Utility.printNewLine();
+        System.out.print("Enter the monster index to target, or '0' to go back to action menu: ");
+        int monsterIndex = Utility.getValidIntegerInputFrom0ToBound(scanner, monsters.size() + 1);
+        if (monsterIndex == 0) {
+            return 0; // If the hero goes back to action menu, the turn is not counted as finished
+        }
+        BaseMonster chosenMonster = monsters.get(monsterIndex - 1);
+        
+        // check if monster is able to dodge
+        int dodge = Utility.getRandomNumber(0, 100);
+        if (dodge < chosenMonster.getDodgeChance()) {
+            System.out.println(chosenMonster.getName() + " dodged the spell.");
+            Utility.printNewLine();
+            return 1; // If the monster dodged the spell, the turn is not counted as finished
+        }
+
+        // monster doesn't dodge the spell, deal damage
+        int damageDealt = chosenSpell.getDamage() + ((this.dexterity/10000)*chosenSpell.getDamage());
+
+        chosenMonster.takeDamage(damageDealt);
+
+        BaseSpell.SpellType spellType = chosenSpell.getType();
+        if (spellType == BaseSpell.SpellType.FIRE) {
+            chosenMonster.setDefense((int) (chosenMonster.getDefense()*0.1));
+        } else if (spellType == BaseSpell.SpellType.ICE) {
+            chosenMonster.setDamage((int) (chosenMonster.getDamage()*0.1));
+        } else if (spellType == BaseSpell.SpellType.LIGHTNING) {
+            chosenMonster.setDodgeChance((int) (chosenMonster.getDodgeChance()*0.1));
+        }
+        System.out.println(chosenMonster.getName() + " took " + damageDealt + " damage from the " + spellType.toString() + " spell.");
+        Utility.printNewLine();
+
+        return 1;
     }
     //#endregion
 }
