@@ -34,10 +34,12 @@ public abstract class BaseItem {
 
     //#region Other Methods
 
+    // Create a deep copy of this item (used when buying from shops)
+    public abstract BaseItem copy();
+
     // Print the item
     public String toString() {
         return this.name + " - Cost: " + this.cost + " - Required Level: " + this.requiredLevel;
     }
-
     //#endregion
 }

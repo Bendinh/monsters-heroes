@@ -1,5 +1,10 @@
 package Monsters;
 
+import Heroes.BaseHero;
+import Items.Armory;
+import Utility.Utility;
+import java.util.Scanner;
+
 public class BaseMonster {
     // Data
     protected String name;
@@ -86,6 +91,22 @@ public class BaseMonster {
     // Take Damage
     public void takeDamage(int amount) {
         this.health -= amount;
+    }
+
+    // Attack Hero
+    public void attackHero(Scanner scanner, BaseHero hero) {
+        int dodgeChance = (int) (hero.getAgility() * 0.05); // dodge chance scaled to 5% of hero's agility
+
+        int dodgeRoll = Utility.getRandomNumber(0, 100);
+        if (dodgeRoll < dodgeChance) {
+            System.out.print(hero.getName() + " dodged " + this.name + "'s attack! (Press Enter to continue)");
+            scanner.nextLine();
+            return;
+        }
+
+        int damageDealt = this.damage;
+
+        hero.takeDamage(scanner, damageDealt, this.name);
     }
     //#endregion
 }

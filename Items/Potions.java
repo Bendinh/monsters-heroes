@@ -26,6 +26,12 @@ public class Potions extends BaseItem {
 
     //#region Other Methods
 
+    @Override
+    public BaseItem copy() {
+        Potions copied = new Potions(this.name, this.cost, this.requiredLevel, this.attributeIncrease, String.join("/", this.attributeAffected));
+        return copied;
+    }
+
     // Print the armor
     public String toString() {
         return "[Potion] " + this.name + " (Price: " + this.cost + ", Level: " + this.requiredLevel + ", Attribute Increase: " + this.attributeIncrease + ", Attribute Affected: " + String.join("/", this.attributeAffected) + ")";

@@ -25,33 +25,76 @@ public class BattleManager {
         int numberOfHeroes = player.getHeroParty().size();
         int maxHeroLevel = player.getMaxHeroLevel();
         ArrayList<BaseMonster> referenceMonsters = this.monsterGenerator.generateMonsters(numberOfHeroes, maxHeroLevel);
-        ArrayList<BaseMonster> battleMonsters = new ArrayList<BaseMonster>();
+        ArrayList<BaseMonster> battleMonsters = new ArrayList<BaseMonster>(); // List of unique monsters in this specific battle
         for (BaseMonster refMonster : referenceMonsters) {
             BaseMonster newMonster = new BaseMonster(refMonster.getName(), refMonster.getLevel(), refMonster.getDamage(), refMonster.getDefense(), refMonster.getDodgeChance());
             battleMonsters.add(newMonster);
         }
-        ArrayList<BaseHero> heroes = player.getHeroParty();
-        while (!heroes.isEmpty() && !battleMonsters.isEmpty()) {
-            this.turn(scanner, heroes, battleMonsters);
-            return 0; //TODO: REMOVE THIS ONCE IMPLEMENTING THE BATTLE SYSTEM
+        ArrayList<BaseHero> playerHeroes = player.getHeroParty();
+        ArrayList<BaseHero> battleHeroes = new ArrayList<BaseHero>(); // List of heroes that are still alive in combat
+        for (BaseHero refHero : playerHeroes) {
+            battleHeroes.add(refHero);
         }
+        while (!battleHeroes.isEmpty() && !battleMonsters.isEmpty()) {
+            int result = this.turn(scanner, battleHeroes, battleMonsters);
+            if (result == 1) {
+                return 1;
+            }
+        }
+
+        // Check for defeated heroes and monsters
+        this.checkForDefeatedHeroes(scanner, battleHeroes, battleMonsters);
+        this.checkForDefeatedMonsters(scanner, battleHeroes, battleMonsters);
+
+        // Check if the player has defeated all the monsters
+        if (battleMonsters.isEmpty()) {
+            System.out.println("You have defeated all the monsters! You win! (Press Enter to continue)");
+            scanner.nextLine();
+            return 0;
+        }
+
+        // Check if the player has been defeated
+        if (battleHeroes.isEmpty()) {
+            System.out.println("All your heroes have been defeated! You lose! (Press Enter to continue)");
+            scanner.nextLine();
+            return 1;
+        }
+
         return 0;
     }
 
     // A turn in the battle
-    public void turn(Scanner scanner, ArrayList<BaseHero> heroes, ArrayList<BaseMonster> monsters) {
+    public int turn(Scanner scanner, ArrayList<BaseHero> heroes, ArrayList<BaseMonster> monsters) {
         this.printBattleInformation(heroes, monsters);
 
         // Let the heroes go first
-        System.out.println("The heroes go first!");
+        System.out.println("The heroes' turn!");
         Utility.printNewLine();
         for (BaseHero hero : heroes) {
-            this.heroTurn(scanner, hero, monsters);
+            int result = this.heroTurn(scanner, hero, monsters);
+            if (result == 1) {
+                return 1;
+            }
             this.checkForDefeatedMonsters(scanner, heroes, monsters);
         }
         Utility.printDoubleSeparator();
-        System.out.println("The monsters go next!");
-        Utility.printNewLine();
+
+        // Let the monsters go next
+        if (!monsters.isEmpty()) {
+            System.out.println("The monsters' turn!");
+            Utility.printNewLine();
+            for (BaseMonster monster : monsters) {
+                this.monsterTurn(scanner, monster, heroes);
+                this.checkForDefeatedHeroes(scanner, heroes, monsters);
+            }
+        }
+
+        // Restore some of heroes' stats after the turn
+        for (BaseHero hero : heroes) {
+            hero.restoreAfterRound(scanner);
+        }
+        Utility.printDoubleSeparator();
+        return 0;
     }
 
     public int heroTurn(Scanner scanner, BaseHero hero, ArrayList<BaseMonster> monsters) {
@@ -133,6 +176,33 @@ public class BattleManager {
             if (monster.getHealth() <= 0) {
                 monsters.remove(monster); // remove defeated monsters from the battle
             }
+        }
+    }
+
+    // Monster turn
+    public void monsterTurn(Scanner scanner, BaseMonster monster, ArrayList<BaseHero> heroes) {
+        // Monsters can only attack; choose a random alive hero to target
+        int chosenIndex = Utility.getRandomNumber(0, heroes.size() - 1);
+        BaseHero chosenHero = heroes.get(chosenIndex);
+        monster.attackHero(scanner, chosenHero);
+    }
+
+    // Check for defeated heroes after the monsters' turn
+    public void checkForDefeatedHeroes(Scanner scanner, ArrayList<BaseHero> heroes, ArrayList<BaseMonster> monsters) {
+        ArrayList<BaseHero> defeatedHeroes = new ArrayList<BaseHero>();
+        for (BaseHero hero : heroes) {
+            if (hero.isFainted()) {
+                defeatedHeroes.add(hero);
+                System.out.println(hero.getName() + " has been defeated!");
+                scanner.nextLine();
+            }
+        }
+        for (BaseHero hero : defeatedHeroes) {
+            System.out.println(hero.getName() + " has fainted!");
+            heroes.remove(hero);
+        }
+        if (!defeatedHeroes.isEmpty()) {
+            Utility.printNewLine();
         }
     }
 

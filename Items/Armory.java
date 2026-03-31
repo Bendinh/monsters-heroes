@@ -20,6 +20,12 @@ public class Armory extends BaseItem implements IExpirable {
 
     //#region Other Methods
 
+    @Override
+    public BaseItem copy() {
+        Armory copied = new Armory(this.name, this.cost, this.requiredLevel, this.damageReduction);
+        return copied;
+    }
+
     // Print the armor
     public String toString() {
         return "[Armor] " + this.name + " (" + this.usesLeft + "/10)" + " (Price: " + this.cost + ", Level: " + this.requiredLevel + ", Damage Reduction: " + this.damageReduction + ")";

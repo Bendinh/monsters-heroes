@@ -6,5 +6,10 @@ public class IceSpell extends BaseSpell {
         super(name, cost, requiredLevel, damage, manaCost);
         this.type = SpellType.ICE;
     }
+
+    @Override
+    public IceSpell copy() {
+        return new IceSpell(this.name, this.cost, this.requiredLevel, this.damage, this.manaCost);
+    }
     
 }

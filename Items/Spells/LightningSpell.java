@@ -6,5 +6,10 @@ public class LightningSpell extends BaseSpell {
         super(name, cost, requiredLevel, damage, manaCost);
         this.type = SpellType.LIGHTNING;
     }
+
+    @Override
+    public LightningSpell copy() {
+        return new LightningSpell(this.name, this.cost, this.requiredLevel, this.damage, this.manaCost);
+    }
     
 }

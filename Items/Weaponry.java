@@ -16,6 +16,12 @@ public class Weaponry extends BaseItem implements IExpirable {
 
     //#region Other Methods
 
+    @Override
+    public BaseItem copy() {
+        Weaponry copied = new Weaponry(this.name, this.cost, this.requiredLevel, this.damage, this.requiredHands);
+        return copied;
+    }
+
     // Get the weapon's damage
     public int getDamage() {
         return this.damage;

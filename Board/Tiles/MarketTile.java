@@ -128,9 +128,16 @@ public class MarketTile extends BaseTile implements IMoveable {
                 continue;
             }
             if (buyerHero.getMoney() >= this.items.get(itemIndex - 1).getCost()) { // Check if the hero has enough money to buy the item
+                if (buyerHero.getLevel() < this.items.get(itemIndex - 1).getRequiredLevel()) { // Check if the hero has the required level to buy the item
+                    System.out.println("Hero does not have the required level to buy this item.");
+                    Utility.printNewLine();
+                    finishedBuying = true;
+                    continue;
+                }
                 BaseItem item = this.items.remove(itemIndex - 1); // Remove the item from the market
                 buyerHero.setMoney(buyerHero.getMoney() - item.getCost()); // Subtract the cost of the item from the hero's money
-                buyerHero.addItemToInventory(item); // Add the item to the hero's inventory
+                BaseItem boughtItem = item.copy();
+                buyerHero.addItemToInventory(boughtItem); // Add the item to the hero's inventory
                 System.out.println("Item bought successfully.");
                 Utility.printNewLine();
                 finishedBuying = true;

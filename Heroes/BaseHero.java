@@ -150,17 +150,35 @@ public abstract class BaseHero {
         return this.health <= 0;
     }
 
-    public void takeDamage(int amount) {
+    public void takeDamage(Scanner scanner, int amount, String attackerName) {
+        if (this.equippedArmory != null) {
+            if (this.equippedArmory.getUsesLeft() > 0) {
+                amount -= this.equippedArmory.getDamageReduction();
+                this.equippedArmory.use();
+                if (this.equippedArmory.getUsesLeft() == 0) {
+                    System.out.println("Hero's armor has been used up and is now broken! (Press Enter to continue)");
+                    scanner.nextLine();
+                }
+            }
+        }
+        if (amount < 0) {
+            amount = 0;
+        }
         this.health -= amount;
+        System.out.print(attackerName + " attacked " + this.name + " and dealt " + amount + " damage. (Press Enter to continue)");
+        scanner.nextLine();
+
     }
 
     public void spendMana(int amount) {
         this.mana -= amount;
     }
 
-    public void restoreAfterRound() {
+    public void restoreAfterRound(Scanner scanner) {
         this.health = (int) (this.health * 1.1);
         this.mana = (int) (this.mana * 1.1);
+        System.out.print("Hero restored some of their stats after the round. (Press Enter to continue)");
+        scanner.nextLine();
     }
 
     public void reviveWithHalfStats() {
@@ -233,7 +251,11 @@ public abstract class BaseHero {
         }
         System.out.println();
 
-        System.out.println("Equipped Armor: " + (this.equippedArmory != null ? this.equippedArmory.getName() : "None"));
+        if (this.equippedArmory != null) {
+            System.out.println("Equipped Armor: " + this.equippedArmory.getName() + " (" + this.equippedArmory.getUsesLeft() + "/10)");
+        } else {
+            System.out.println("Equipped Armor: None");
+        }
         System.out.print("Inventory: ");
         if (this.inventory.size() == 0) {
             System.out.print("None");
@@ -270,7 +292,11 @@ public abstract class BaseHero {
         }
         System.out.println();
 
-        System.out.println("Equipped Armor: " + (this.equippedArmory != null ? this.equippedArmory.getName() : "None"));
+        if (this.equippedArmory != null) {
+            System.out.println("Equipped Armor: " + this.equippedArmory.getName() + " (" + this.equippedArmory.getUsesLeft() + "/10)");
+        } else {
+            System.out.println("Equipped Armor: None");
+        }
         System.out.print("Inventory: ");
         if (this.inventory.size() == 0) {
             System.out.print("None");
@@ -520,6 +546,12 @@ public abstract class BaseHero {
             this.inventory.remove(chosen); // Remove the potion from the inventory
             this.applyPotionEffects(chosen); // Apply the potion effects to the hero
             System.out.println("Potion used successfully.");
+            String increaseString = " has been increased by " + chosen.getAttributeIncrease() + ".";
+            for (String attribute : chosen.getAttributeAffected()) {
+                increaseString = "/" + attribute + increaseString;
+            }
+            System.out.println(increaseString + " (Press Enter to continue)");
+            scanner.nextLine();
             Utility.printNewLine();
             finishedUsing = true;
         }
@@ -560,7 +592,8 @@ public abstract class BaseHero {
         // check if monster is able to dodge
         int dodge = Utility.getRandomNumber(0, 100);
         if (dodge < chosen.getDodgeChance()) {
-            System.out.println(chosen.getName() + " dodged the attack.");
+            System.out.print(chosen.getName() + " dodged the attack. (Press Enter to continue)");
+            scanner.nextLine();
             Utility.printNewLine();
             return 1; // If the monster dodged the attack, the turn is finished
         }
@@ -576,7 +609,8 @@ public abstract class BaseHero {
 
 
         chosen.takeDamage(damageDealt);
-        System.out.println(chosen.getName() + " took " + damageDealt + " damage.");
+        System.out.print(chosen.getName() + " took " + damageDealt + " damage. (Press Enter to continue)");
+        scanner.nextLine();
         Utility.printNewLine();
 
         return 1;
@@ -592,7 +626,8 @@ public abstract class BaseHero {
             }
         }
         if (spells.size() == 0) {
-            System.out.println("Hero has no spells in inventory.");
+            System.out.print("Hero has no spells in inventory. (Press Enter to continue)");
+            scanner.nextLine();
             Utility.printNewLine();
             return 0; // If the hero has no spells in inventory, the turn is not counted as finished
         }
@@ -612,14 +647,16 @@ public abstract class BaseHero {
 
         // check if hero has the required level to use the spell
         if (this.level < chosenSpell.getRequiredLevel()) {
-            System.out.println("Hero does not have the required level to use this spell.");
+            System.out.print("Hero does not have the required level to use this spell. (Press Enter to continue)");
+            scanner.nextLine();
             Utility.printNewLine();
             return 0; // If the hero does not have the required level to use the spell, the turn is not counted as finished
         }
 
         // check if hero has enough mana to use the spell
         if (this.mana < chosenSpell.getManaCost()) {
-            System.out.println("Hero does not have enough mana to use this spell.");
+            System.out.print("Hero does not have enough mana to use this spell. (Press Enter to continue)");
+            scanner.nextLine();
             Utility.printNewLine();
             return 0; // If the hero does not have enough mana to use the spell, the turn is not counted as finished
         }
@@ -639,25 +676,29 @@ public abstract class BaseHero {
         // check if monster is able to dodge
         int dodge = Utility.getRandomNumber(0, 100);
         if (dodge < chosenMonster.getDodgeChance()) {
-            System.out.println(chosenMonster.getName() + " dodged the spell.");
+            System.out.print(chosenMonster.getName() + " dodged the spell. (Press Enter to continue)");
+            scanner.nextLine();
             Utility.printNewLine();
             return 1; // If the monster dodged the spell, the turn is not counted as finished
         }
 
         // monster doesn't dodge the spell, deal damage
-        int damageDealt = chosenSpell.getDamage() + ((this.dexterity/10000)*chosenSpell.getDamage());
+        int damageDealt = chosenSpell.getDamage() + ((int) ((this.dexterity/10000.0)*chosenSpell.getDamage()));
+        this.spendMana(chosenSpell.getManaCost()); // Spend the mana cost of the spell
+        this.getInventory().remove(chosenSpell); // Remove the spell from the inventory
 
         chosenMonster.takeDamage(damageDealt);
 
         BaseSpell.SpellType spellType = chosenSpell.getType();
         if (spellType == BaseSpell.SpellType.FIRE) {
-            chosenMonster.setDefense((int) (chosenMonster.getDefense()*0.1));
+            chosenMonster.setDefense((int) (chosenMonster.getDefense()*0.9));
         } else if (spellType == BaseSpell.SpellType.ICE) {
-            chosenMonster.setDamage((int) (chosenMonster.getDamage()*0.1));
+            chosenMonster.setDamage((int) (chosenMonster.getDamage()*0.9));
         } else if (spellType == BaseSpell.SpellType.LIGHTNING) {
-            chosenMonster.setDodgeChance((int) (chosenMonster.getDodgeChance()*0.1));
+            chosenMonster.setDodgeChance((int) (chosenMonster.getDodgeChance()*0.9));
         }
-        System.out.println(chosenMonster.getName() + " took " + damageDealt + " damage from the " + spellType.toString() + " spell.");
+        System.out.print(chosenMonster.getName() + " took " + damageDealt + " damage from the " + spellType.toString() + " spell. (Press Enter to continue)");
+        scanner.nextLine();
         Utility.printNewLine();
 
         return 1;
