@@ -1,9 +1,5 @@
-﻿Guide to Readme.txt or Readme.md
-Required sections: Header, Files, Notes, How to compile and run, I/O Example
-
-
-# CS611-Assignment 1
-## Board Game Platform: Slider Puzzle
+﻿# CS611-Assignment 4
+## Legends: Monsters and Heroes
 ---------------------------------------------------------------------------
 - Name: Minh Dinh
 - Email: minhd5@bu.edu

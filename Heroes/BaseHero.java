@@ -155,10 +155,9 @@ public abstract class BaseHero {
             if (this.equippedArmory.getUsesLeft() > 0) {
                 amount -= this.equippedArmory.getDamageReduction();
                 this.equippedArmory.use();
-                if (this.equippedArmory.getUsesLeft() == 0) {
-                    System.out.println("Hero's armor has been used up and is now broken! (Press Enter to continue)");
-                    scanner.nextLine();
-                }
+            } else {
+                System.out.println("Hero's armor has been used up and is now broken, remember to repair it! (Press Enter to continue)");
+                scanner.nextLine();
             }
         }
         if (amount < 0) {
@@ -246,7 +245,7 @@ public abstract class BaseHero {
             System.out.print("None");
         } else {
             for (Weaponry weapon : this.equippedWeaponry) {
-                System.out.print(weapon.getName() + ", ");
+                System.out.print(weapon.getName() + " (" + weapon.getUsesLeft() + "/10)" + ", ");
             }
         }
         System.out.println();
@@ -287,7 +286,7 @@ public abstract class BaseHero {
             System.out.print("None");
         } else {
             for (Weaponry weapon : this.equippedWeaponry) {
-                System.out.print(weapon.getName() + ", ");
+                System.out.print(weapon.getName() + " (" + weapon.getUsesLeft() + "/10)" + ", ");
             }
         }
         System.out.println();
@@ -602,7 +601,15 @@ public abstract class BaseHero {
         int damageDealt = this.strength; // Base damage is the hero's strength
         if (this.equippedWeaponry.size() > 0) {
             for (Weaponry weapon : this.equippedWeaponry) {
-                damageDealt += weapon.getDamage(); // Add the weapon's damage to the base damage
+                if (weapon.getUsesLeft() > 0) { // If weapon is not broken, add the weapon's damage to the base damage
+                    damageDealt += weapon.getDamage(); // Add the weapon's damage to the base damage
+                    weapon.use(); // Use the weapon
+                } else { // If weapon is broken, don't add additional damage
+                    System.out.println(weapon.getName() + " has been used up and is now broken, remember to repair it! (Press Enter to continue)");
+                    scanner.nextLine();
+                    Utility.printNewLine();
+                    continue;
+                }
             }
         }
         damageDealt *= 0.05; // damage scaled to 5% of total offensive stats

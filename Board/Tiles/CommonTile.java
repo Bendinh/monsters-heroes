@@ -34,12 +34,12 @@ public class CommonTile extends BaseTile implements IMoveable {
     //#region Other Methods
     // Action when the tile is interacted with
     public int action(Scanner scanner) {
-        int randomNumber = new Random().nextInt(10);
-        if (randomNumber < 3) { // 30% chance of encountering monsters
+        int randomNumber = Utility.getRandomNumber(0, 9);
+        if (randomNumber < 4) { // 40% chance of encountering monsters
             System.out.println("You have encountered monsters! Prepare for battle...");
             Utility.printNewLine();
             return this.battle(scanner);
-        } else { // 70% chance of continuing on your journey peacefully
+        } else { // 60% chance of continuing on your journey peacefully
             System.out.println(" You continue on your journey peacefully...");
             Utility.printNewLine();
             return 0;
